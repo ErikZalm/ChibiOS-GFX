@@ -277,7 +277,7 @@ void GDISP_LLD(drawpixel)(coord_t x, coord_t y, color_t color) {
 	 * @notapi
 	 */
 	void GDISP_LLD(blitareaex)(coord_t x, coord_t y, coord_t cx, coord_t cy, coord_t srcx, coord_t srcy, coord_t srccx, const pixel_t *buffer) {
-		coord_t endx, endy;
+		coord_t endy;
 		unsigned lg;
 
 		#if GDISP_NEED_VALIDATION || GDISP_NEED_CLIP
@@ -483,7 +483,7 @@ void GDISP_LLD(drawpixel)(coord_t x, coord_t y, color_t color) {
 		uint16_t lcdBitBLTBuffer[10];
 		lcdBitBLTBuffer[0] = 0x05;                                           /* 0x82 16bpp, source linear */
 		lcdBitBLTBuffer[2] = 0x00;                                           /* 0x86 Move positive */
-		lcdBitBLTBuffer[3] = (480*272)*2;                                    /* 0x88 Source start address */
+		lcdBitBLTBuffer[3] = ((480*272)*2) & 0xffff;                         /* 0x88 Source start address */
 		lcdBitBLTBuffer[4] = (480*272*2)>>16;                                /* 0x8A Source start address */
 		lcdBitBLTBuffer[5] = (y * GDISP_SCREEN_WIDTH * 2) + (x * 2);         /* 0x8C Destination start address */
 		lcdBitBLTBuffer[6] = ((y * GDISP_SCREEN_WIDTH * 2) + (x * 2)) >> 16; /* 0x8E Destination start address */
@@ -493,9 +493,6 @@ void GDISP_LLD(drawpixel)(coord_t x, coord_t y, color_t color) {
 		lld_lcdBurstWriteMemory(0x60882, lcdBitBLTBuffer, 10);
 
 		lld_lcdWriteReg( 0x80, 0x01);                                        /* Start blit */
-
-		/* [Patch by Badger] Write all in one stroke */
-//		GDISP_LLD(blitareaex)(x, y, width, height, 0, 0, width, buf);
 	}
 #endif
 

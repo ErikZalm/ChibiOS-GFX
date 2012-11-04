@@ -85,7 +85,7 @@
 		spiUnselect(&SPID2);
 	}
 
-	static void lld_lcdBurstWriteMemory( uint32_t Offset, const uint16_t* Data, uint32_t Count )
+	void lld_lcdBurstWriteMemory( uint32_t Offset, const uint16_t* Data, uint32_t Count )
 	{
 		/* Add Write 16 bit to address */
 		Offset &= 0x00FFFFFF;
